@@ -12,22 +12,22 @@ The design was built from the ground up — focusing on **precise timing**, **ha
 ---
 
 ## Table of Contents
-- Introduction  
-- System Overview  
-- Timing and Synchronization  
-- Baud Rate Configuration  
-- Frame Format  
-- Module Descriptions  
-  - Baud Generator (baud_gen.v)  
-  - UART Transmitter (uart_tx.v)  
-  - UART Receiver (uart_rx.v)  
-  - Top-Level Loopback Integration (uart_top.v)  
-  - Verification Testbench (uart_tb.v)  
-- Simulation and Waveforms  
-- Results  
-- Design Insights  
-- Future Improvements  
-- License  
+- [Introduction](#introduction)
+- [System Overview](#system-overview)
+- [Timing and Synchronization](#timing-and-synchronization)
+- [Baud Rate Configuration](#baud-rate-configuration)
+- [Frame Format](#frame-format)
+- [Module Descriptions](#module-descriptions)
+  - [Baud Generator (`baud_gen.v`)](#baud-generator-baud_genv)
+  - [UART Transmitter (`uart_tx.v`)](#uart-transmitter-uart_txv)
+  - [UART Receiver (`uart_rx.v`)](#uart-receiver-uart_rxv)
+  - [Top-Level Loopback Integration (`uart_top.v`)](#top-level-loopback-integration-uart_topv)
+  - [Verification Testbench (`uart_tb.v`)](#verification-testbench-uart_tbv)
+- [Simulation and Waveforms](#simulation-and-waveforms)
+- [Results](#results)
+- [Design Insights](#design-insights)
+- [Future Improvements](#future-improvements)
+- [License](#license)
 
 ---
 
