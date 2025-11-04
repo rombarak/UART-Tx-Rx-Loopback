@@ -1,5 +1,5 @@
 # UART Transmitter & Receiver with Loopback (Verilog HDL)
-
+<a id="sec-author"></a>
 **Author:** Rom Barak  
 **Institution:** Bar-Ilan University
 **Focus:** Nanoelectronics and Communication Systems
@@ -12,27 +12,27 @@ The design was built from the ground up — focusing on **precise timing**, **ha
 ---
 
 ## Table of Contents
-- [Author](#author)
-- [Introduction](#introduction)
-- [System Overview](#system-overview)
-- [Timing and Synchronization](#timing-and-synchronization)
-- [Baud Rate Configuration](#baud-rate-configuration)
-- [Frame Format](#frame-format)
-- [Modules Description](#modules-description)
-  - [Baud Generator (`baud_gen.v`)](#baud-generator-baud_genv)
-  - [UART Transmitter (`uart_tx.v`)](#uart-transmitter-uart_txv)
-  - [UART Receiver (`uart_rx.v`)](#uart-receiver-uart_rxv)
-  - [Top-Level Loopback Integration (`uart_top.v`)](#top-level-loopback-integration-uart_topv)
-  - [Verification Testbench (`uart_tb.v`)](#verification-testbench-uart_tbv)
-- [Simulation and Waveforms](#simulation-and-waveforms)
-- [Results](#results)
-- [Design Insights](#design-insights)
-- [Baud Rate Adjustment Guide](#baud-rate-adjustment-guide)
-- [Future Improvements](#future-improvements)
-- [License](#license)
+- [Author](#sec-author)
+- [Introduction](#sec-intro)
+- [System Overview](#sec-overview)
+- [Timing and Synchronization](#sec-timing)
+- [Baud Rate Configuration](#sec-baud)
+- [Frame Format](#sec-frame)
+- [Modules Description](#sec-modules)
+  - [Baud Generator (`baud_gen.v`)](#sec-baud-gen)
+  - [UART Transmitter (`uart_tx.v`)](#sec-uart-tx)
+  - [UART Receiver (`uart_rx.v`)](#sec-uart-rx)
+  - [Top-Level Loopback Integration (`uart_top.v`)](#sec-top)
+  - [Verification Testbench (`uart_tb.v`)](#sec-tb)
+- [Simulation and Waveforms](#sec-waves)
+- [Results](#sec-results)
+- [Design Insights](#sec-insights)
+- [Baud Rate Adjustment Guide](#sec-baud-guide)
+- [Future Improvements](#sec-future)
+- [License](#sec-license)
 
 ---
-
+<a id="sec-intro"></a>
 ## Introduction
 This project demonstrates a reliable **UART (Universal Asynchronous Receiver/Transmitter)** design that achieves error-free serial communication under simulation.  
 The system follows the **8N1** standard format — 8 data bits, no parity, 1 stop bit — and is clocked by a **50 MHz** system clock with a **9600 baud** transmission rate.  
@@ -43,7 +43,7 @@ Instead, it achieves accurate reception through **deterministic half-bit alignme
 The design and all test scenarios were implemented and simulated using **Cadence Xcelium** and **GTKWave**.
 
 ---
-
+<a id="sec-overview"></a>
 ## System Overview
 The UART system contains three main hardware modules:
 1. **Baud Rate Generator (`baud_gen.v`)** – Divides the 50 MHz clock to generate the baud-rate tick.
@@ -55,7 +55,7 @@ These modules are connected inside the **`uart_top.v`** integration file, where 
 Both TX and RX use the **same baud tick** signal from the generator, ensuring perfect synchronization at the bit level.
 
 ---
-
+<a id="sec-timing"></a>
 ## Timing and Synchronization
 The system operates at:
 - **System Clock:** 50 MHz  
@@ -72,7 +72,7 @@ This precise half-tick offset ensures that RX samples at the most stable voltage
 Although both TX and RX receive ticks at the same time, their internal FSM phases cause a natural half-tick difference between transmission edges and sampling points — producing correct mid-bit alignment.
 
 ---
-
+<a id="sec-baud"></a>
 ## Baud Rate Configuration
 The default setup is **50 MHz system clock** and **9600 baud rate** — this configuration provides highly stable and accurate timing (≈0.006% baud error).  
 If you wish to change the baud rate, update the following parameters in **`baud_gen.v`**:
@@ -86,7 +86,6 @@ After changing `BAUD_RATE`, the `DIVISOR` constant will automatically adjust:
 ```
 localparam integer DIVISOR = CLK_FREQ / BAUD_RATE;
 ```
-
 > **Important:**  
 > - The same clock frequency and baud rate must be used across all modules.  
 > - If you change the baud rate, you **must also modify timing-related delays in the testbench (`uart_tb.v`)** —  
@@ -96,7 +95,7 @@ localparam integer DIVISOR = CLK_FREQ / BAUD_RATE;
 This is the frequency ratio that the entire project was verified and tuned with.
 
 ---
-
+<a id="sec-frame"></a>
 ## Frame Format
 Each transmitted UART frame contains **10 bits total**:
 | Segment | Bits | Description |
@@ -112,9 +111,9 @@ Each transmitted UART frame contains **10 bits total**:
 This follows the 8N1 UART convention.
 
 ---
-
+<a id="sec-modules"></a>
 ## Module Descriptions
-
+<a id="sec-baud-gen"></a>
 ### **1. Baud Generator – `baud_gen.v`**
 Generates the baud-rate timing pulse shared by both TX and RX.  
 The divider computes:
@@ -126,7 +125,7 @@ When the internal counter reaches `DIVISOR - 1`, a one-clock-cycle `tick` pulse 
 **Purpose:** Ensures both transmitter and receiver progress through each bit period in exact lockstep.
 
 ---
-
+<a id="sec-uart-tx"></a>
 ### **2. UART Transmitter – `uart_tx.v`**
 Implements the transmit-side FSM with four states:
 - **IDLE:** Line is high; waits for `tx_start` trigger.  
@@ -139,7 +138,7 @@ When `tx_start` is asserted, the module latches the byte into a shift register a
 This FSM guarantees consistent bit timing and correct framing.
 
 ---
-
+<a id="sec-uart-rx"></a>
 ### **3. UART Receiver – `uart_rx.v`**
 The receiver mirrors the TX FSM with four states:
 - **IDLE:** Monitors line for a falling edge (start bit).  
@@ -150,14 +149,14 @@ The receiver mirrors the TX FSM with four states:
 This design achieves accurate mid-bit sampling without oversampling, purely based on timing alignment from the shared tick.
 
 ---
-
+<a id="sec-top"></a>
 ### **4. Top-Level Integration – `uart_top.v`**
 Connects all modules into a complete UART system.  
 The TX line is internally looped to the RX input, allowing closed-loop validation.  
 This configuration verifies all timing, synchronization, and FSM behavior within one simulation environment.
 
 ---
-
+<a id="sec-tb"></a>
 ### **5. Verification Testbench – `uart_tb.v`**
 A self-checking testbench that automates:
 - Clock generation (50 MHz)
@@ -173,7 +172,7 @@ Each transaction is logged using `$display`, verifying byte-for-byte integrity.
 A VCD waveform (`uart_loopback.vcd`) is generated for visual inspection.
 
 ---
-
+<a id="sec-waves"></a>
 ## Simulation and Waveforms
 The design was simulated using **Cadence Xcelium** and **GTKWave**.  
 Waveforms show:
@@ -183,7 +182,7 @@ Waveforms show:
 - Perfect data reconstruction with no mismatches  
 
 ---
-
+<a id="sec-results"></a>
 ## Results
 - 100% match between transmitted and received bytes  
 - TX and RX perfectly synchronized under shared tick control  
@@ -194,7 +193,7 @@ Waveforms show:
 This confirms full functional correctness and timing reliability.
 
 ---
-
+<a id="sec-insights"></a>
 ## Design Insights
 - **Single shared tick** ensures deterministic synchronization between TX and RX.  
 - **Half-bit delay** in RX guarantees sampling at the bit center without oversampling.  
@@ -204,7 +203,7 @@ This confirms full functional correctness and timing reliability.
 The combination of shared timing, FSM separation, and internal loopback produces a robust and verifiable UART implementation.
 
 ---
-
+<a id="sec-future"></a>
 ## Future Improvements
 
 The current UART system operates accurately in a full loopback configuration, but several engineering enhancements could extend its functionality and robustness for real-world applications:
@@ -225,7 +224,7 @@ The current UART system operates accurately in a full loopback configuration, bu
 - **FPGA I/O Integration (External UART Interface)**  
   Connecting the TX/RX signals to physical FPGA pins enables real serial communication with PCs, microcontrollers, or other devices, facilitating hardware-level verification.
 ---
-
+<a id="sec-license"></a>
 ## License
 Released under the **MIT License**.  
 Free for academic, research, and educational use.
