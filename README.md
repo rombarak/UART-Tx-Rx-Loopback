@@ -12,12 +12,13 @@ The design was built from the ground up — focusing on **precise timing**, **ha
 ---
 
 ## Table of Contents
+- [Author](#author)
 - [Introduction](#introduction)
 - [System Overview](#system-overview)
 - [Timing and Synchronization](#timing-and-synchronization)
 - [Baud Rate Configuration](#baud-rate-configuration)
 - [Frame Format](#frame-format)
-- [Module Descriptions](#module-descriptions)
+- [Modules Description](#modules-description)
   - [Baud Generator (`baud_gen.v`)](#baud-generator-baud_genv)
   - [UART Transmitter (`uart_tx.v`)](#uart-transmitter-uart_txv)
   - [UART Receiver (`uart_rx.v`)](#uart-receiver-uart_rxv)
@@ -26,6 +27,7 @@ The design was built from the ground up — focusing on **precise timing**, **ha
 - [Simulation and Waveforms](#simulation-and-waveforms)
 - [Results](#results)
 - [Design Insights](#design-insights)
+- [Baud Rate Adjustment Guide](#baud-rate-adjustment-guide)
 - [Future Improvements](#future-improvements)
 - [License](#license)
 
