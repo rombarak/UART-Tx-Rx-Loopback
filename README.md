@@ -7,7 +7,7 @@
 This project implements a complete **UART communication system** in **Verilog HDL**, designed and verified through a **fully functional loopback setup**.  
 It includes the **Baud Rate Generator**, **Transmitter (TX)**, **Receiver (RX)**, **Top-Level Integration**, and a **self-checking Testbench** that validates transmission accuracy and synchronization in simulation.  
 
-The design was built from the ground up — focusing on **precise timing**, **half-bit sampling alignment**, and **shared tick synchronization** — achieving bit-perfect loopback communication with zero mismatches.
+The design was built from the ground up - focusing on **precise timing**, **half-bit sampling alignment**, and **shared tick synchronization** - achieving bit-perfect loopback communication with zero mismatches.
 
 ---
 
@@ -66,7 +66,7 @@ The system operates at:
 The `baud_gen` creates a **1-cycle-wide pulse** (`tick`) every 5208 system cycles.  
 This tick acts as the universal timing reference for both the transmitter and receiver.
 
-When the RX detects the **falling edge** of the start bit, it enters a “half-bit delay” phase — effectively aligning sampling to the **middle** of each subsequent bit period.  
+When the RX detects the **falling edge** of the start bit, it enters a “half-bit delay” phase - effectively aligning sampling to the **middle** of each subsequent bit period.  
 This precise half-tick offset ensures that RX samples at the most stable voltage level of the bit.
 
 Although both TX and RX receive ticks at the same time, their internal FSM phases cause a natural half-tick difference between transmission edges and sampling points — producing correct mid-bit alignment.
@@ -74,7 +74,7 @@ Although both TX and RX receive ticks at the same time, their internal FSM phase
 ---
 <a id="sec-baud"></a>
 ## Baud Rate Configuration
-The default setup is **50 MHz system clock** and **9600 baud rate** — this configuration provides highly stable and accurate timing (≈0.006% baud error).  
+The default setup is **50 MHz system clock** and **9600 baud rate** - this configuration provides highly stable and accurate timing (≈0.006% baud error).  
 If you wish to change the baud rate, update the following parameters in **`baud_gen.v`**:
 
 ```verilog
