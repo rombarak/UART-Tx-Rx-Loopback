@@ -179,7 +179,7 @@ Waveforms show:
 - The shared `tick` signal aligning TX and RX
   ![Simulation and Waveforms](Assets/wave_shared_tick.png) 
 - The RX’s half-bit delay for mid-bit sampling
-    ![Simulation and Waveforms](Assets/wave_mit_bit.png)  
+    ![Simulation and Waveforms](Assets/wave_mid_bit.png)  
 - The FSM transitions (`IDLE → START → DATA → STOP`)
     ![Simulation and Waveforms](Assets/wave_fsm.png)  
 - Perfect data reconstruction with no mismatches
