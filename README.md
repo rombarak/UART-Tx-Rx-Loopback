@@ -176,10 +176,14 @@ A VCD waveform (`uart_loopback.vcd`) is generated for visual inspection.
 ## Simulation and Waveforms
 This waveforms was captured using a 10MHz system clock and UART baud rate of 9600 bps.  
 Waveforms show:
-- The shared `tick` signal aligning TX and RX  
-- The RX’s half-bit delay for mid-bit sampling  
-- The FSM transitions (`IDLE → START → DATA → STOP`)  
-- Perfect data reconstruction with no mismatches  
+- The shared `tick` signal aligning TX and RX
+  ![Simulation and Waveforms](Assets/wave_shared_tick.png) 
+- The RX’s half-bit delay for mid-bit sampling
+    ![Simulation and Waveforms](Assets/wave_midbit.png)  
+- The FSM transitions (`IDLE → START → DATA → STOP`)
+    ![Simulation and Waveforms](Assets/wave_fsm.png)  
+- Perfect data reconstruction with no mismatches
+    ![Simulation and Waveforms](Assets/wave_reconstruction.png)   
 
 ---
 <a id="sec-results"></a>
