@@ -174,7 +174,7 @@ A VCD waveform (`uart_loopback.vcd`) is generated for visual inspection.
 ---
 <a id="sec-waves"></a>
 ## Simulation and Waveforms
-The design was simulated using **Cadence Xcelium** and **GTKWave**.  
+This waveforms was captured using a 10MHz system clock and UART baud rate of 9600 bps.  
 Waveforms show:
 - The shared `tick` signal aligning TX and RX  
 - The RX’s half-bit delay for mid-bit sampling  
