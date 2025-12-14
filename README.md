@@ -1,6 +1,7 @@
 # UART Transmitter & Receiver with Loopback (Verilog HDL)
 <a id="sec-author"></a>
 **Author:** Rom Barak  
+
 **Institution:** Bar-Ilan University
 
 **Focus:** Nanoelectronics and Communication Systems
