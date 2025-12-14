@@ -35,7 +35,7 @@ The design was built from the ground up - focusing on **precise timing**, **half
 <a id="sec-intro"></a>
 ## Introduction
 This project demonstrates a reliable **UART (Universal Asynchronous Receiver/Transmitter)** design that achieves error-free serial communication under simulation.  
-The system follows the **8N1** standard format — 8 data bits, no parity, 1 stop bit — and is clocked by a **50 MHz** system clock with a **9600 baud** transmission rate.  
+The system follows the **8N1** standard format - 8 data bits, no parity, 1 stop bit - and is clocked by a **50 MHz** system clock with a **9600 baud** transmission rate.  
 
 Unlike many UART examples, this design does not rely on oversampling.  
 Instead, it achieves accurate reception through **deterministic half-bit alignment**, verified by timing analysis and waveform inspection.
@@ -46,9 +46,9 @@ The design and all test scenarios were implemented and simulated using **Cadence
 <a id="sec-overview"></a>
 ## System Overview
 The UART system contains three main hardware modules:
-1. **Baud Rate Generator (`baud_gen.v`)** – Divides the 50 MHz clock to generate the baud-rate tick.
-2. **Transmitter (`uart_tx.v`)** – Serializes data into start, data, and stop bits.
-3. **Receiver (`uart_rx.v`)** – Deserializes incoming bits, aligns timing, and reconstructs data bytes.
+1. **Baud Rate Generator (`baud_gen.v`)** - Divides the 50 MHz clock to generate the baud-rate tick.
+2. **Transmitter (`uart_tx.v`)** - Serializes data into start, data, and stop bits.
+3. **Receiver (`uart_rx.v`)** - Deserializes incoming bits, aligns timing, and reconstructs data bytes.
 
 These modules are connected inside the **`uart_top.v`** integration file, where the TX output is **looped back** to the RX input, allowing complete internal verification without physical UART lines.
 
@@ -69,7 +69,7 @@ This tick acts as the universal timing reference for both the transmitter and re
 When the RX detects the **falling edge** of the start bit, it enters a “half-bit delay” phase - effectively aligning sampling to the **middle** of each subsequent bit period.  
 This precise half-tick offset ensures that RX samples at the most stable voltage level of the bit.
 
-Although both TX and RX receive ticks at the same time, their internal FSM phases cause a natural half-tick difference between transmission edges and sampling points — producing correct mid-bit alignment.
+Although both TX and RX receive ticks at the same time, their internal FSM phases cause a natural half-tick difference between transmission edges and sampling points - producing correct mid-bit alignment.
 
 ---
 <a id="sec-baud"></a>
@@ -88,7 +88,7 @@ localparam integer DIVISOR = CLK_FREQ / BAUD_RATE;
 ```
 > **Important:**  
 > - The same clock frequency and baud rate must be used across all modules.  
-> - If you change the baud rate, you **must also modify timing-related delays in the testbench (`uart_tb.v`)** —  
+> - If you change the baud rate, you **must also modify timing-related delays in the testbench (`uart_tb.v`)** -  
 >   specifically, the wait durations between transmitted bytes (`#2000`, `wait(rx_done)`, etc.), so that they correspond to the new bit period.  
 > - For best simulation stability, it is recommended to keep the default configuration: **50 MHz / 9600 bps**.
 
@@ -157,7 +157,7 @@ This configuration verifies all timing, synchronization, and FSM behavior within
 
 ---
 <a id="sec-tb"></a>
-### **5. Verification Testbench – `uart_tb.v`**
+### **5. Verification Testbench - `uart_tb.v`**
 A self-checking testbench that automates:
 - Clock generation (50 MHz)
 - Reset sequencing  
