@@ -2,6 +2,7 @@
 <a id="sec-author"></a>
 **Author:** Rom Barak  
 **Institution:** Bar-Ilan University
+
 **Focus:** Nanoelectronics and Communication Systems
 
 This project implements a complete **UART communication system** in **Verilog HDL**, designed and verified through a **fully functional loopback setup**.  
