@@ -52,6 +52,7 @@ module uart_top (clk, rst, tx_start, tx_data, rx_data, rx_done, tx_busy);
 
 endmodule
 
+
 // ---------------------------EXPLANATION---------------------------------
 // The baud_gen module produces the shared timing tick.
 // uart_tx sends serial data on tx_line.
