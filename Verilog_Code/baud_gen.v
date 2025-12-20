@@ -6,37 +6,33 @@
 //-------------------------------------------
 
 
-module baud_gen (clk, rst, tick) ;
+module baud_gen (clk, rst, tick);
+    input  clk;
+    input  rst;
+    output reg tick;
 
-    input  clk ;          // system clock
-    input  rst ;          // asynchronous reset
-    output reg tick ;     // tick pulse
+    parameter CLK_FREQ  = 10_000_000;
+    parameter BAUD_RATE = 9600;
 
-    parameter CLK_FREQ  = 50_000_000 ;  // clock frequency [Hz]
-    parameter BAUD_RATE = 9600 ;        // baud rate [bps]
+    // Updated divisor for x16 oversampling
+    localparam integer DIVISOR = CLK_FREQ / (BAUD_RATE * 16);
 
-    localparam integer DIVISOR = CLK_FREQ / BAUD_RATE ; // cycles per tick
+    reg [31:0] counter;
 
-    reg [31:0] counter ;
-
-    always @(posedge clk or posedge rst)
-    begin
+    always @(posedge clk or posedge rst) begin
         if (rst) begin
-            counter <= 0 ;
-            tick    <= 0 ;
-        end
-        else begin
+            counter <= 0;
+            tick    <= 0;
+        end else begin
             if (counter == DIVISOR - 1) begin
-                counter <= 0 ;
-                tick    <= 1 ;
-            end
-            else begin
-                counter <= counter + 1 ;
-                tick    <= 0 ;
+                counter <= 0;
+                tick    <= 1;
+            end else begin
+                counter <= counter + 1;
+                tick    <= 0;
             end
         end
     end
-
 endmodule
 
 // ---------------------------EXPLANATION---------------------------------
