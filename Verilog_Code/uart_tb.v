@@ -5,66 +5,49 @@
 // to be received, and compares TX vs RX results. Dumps waveform output.
 //-------------------------------------------
 
-`timescale 1ns/1ns
+module tb_baud_gen ;
 
-module uart_tb;
+    // Signals
+    reg clk ;           
+    reg rst ;           
+    wire tick ;         
 
-  // -------------------- Test Signals --------------------
-  reg clk;                  // simulated clock
-  reg rst;                  // reset signal
-  reg tx_start;             // start trigger
-  reg [7:0] tx_data;        // byte to send
-  wire [7:0] rx_data;       // received byte
-  wire rx_done;             // signals reception complete
-  wire tx_busy;             // transmitter status
+    // Parameters
+    parameter CLK_FREQ  = 1_000_000 ;   // 1 MHz clock
+    parameter BAUD_RATE = 10_000 ;      // 10 Kbps baud
 
-  // -------------------- Instantiate DUT --------------------
-  uart_top dut (
-    .clk(clk),
-    .rst(rst),
-    .tx_start(tx_start),
-    .tx_data(tx_data),
-    .rx_data(rx_data),
-    .rx_done(rx_done),
-    .tx_busy(tx_busy)
-  );
+    // DUT
+    baud_gen #(
+        .CLK_FREQ(CLK_FREQ),
+        .BAUD_RATE(BAUD_RATE)
+    ) uut (
+        .clk(clk),
+        .rst(rst),
+        .tick(tick)
+    );
 
-  // -------------------- Clock Generation --------------------
-  always #10 clk = ~clk;     // toggle every 10 ns → 50 MHz clock
+    // Clock gen
+    initial clk = 0 ;
+    always #0.5 clk = ~clk ;  // 1 MHz (1 µs period)
 
-  // -------------------- Test Sequence --------------------
-  initial begin
-    $dumpfile("uart_loopback.vcd");    // waveform file
-    $dumpvars(0, uart_tb);             // record all signals
+    // Reset
+    initial begin
+        rst = 1 ;
+        #5 rst = 0 ;
+    end
 
-    clk = 0; rst = 1; tx_start = 0; tx_data = 8'h00; // initialize
-    #100 rst = 0;                     // release reset after 100 ns
+    // Simulation
+    initial begin
+        $dumpfile("baud_gen_tb.vcd") ;
+        $dumpvars(0, tb_baud_gen) ;
+        #20000 $finish ;
+    end
 
-    // send several bytes through loopback
-    send_byte(8'hA5);
-    send_byte(8'h3C);
-    send_byte(8'hFF);
-    send_byte(8'h00);
-    send_byte(8'h55);
-
-    #2000 $finish;                    // end simulation
-  end
-
-  // -------------------- Helper Task --------------------
-  task send_byte(input [7:0] data);
-  begin
-    @(negedge clk);
-    tx_data  = data;                  // load data byte
-    tx_start = 1;                     // raise start flag
-    @(negedge clk);
-    tx_start = 0;                     // lower it next cycle
-    wait(rx_done);                    // wait until byte received
-    #20;
-    $display("TX = 0x%02h  RX = 0x%02h  %s",
-             data, rx_data,
-             (rx_data == data) ? "V MATCH" : "X MISMATCH");
-  end
-  endtask
+    // Monitor
+    initial begin
+        $display("Time (ns)\tTick") ;
+        $monitor("%d\t\t%b", $time, tick) ;
+    end
 
 endmodule
 
