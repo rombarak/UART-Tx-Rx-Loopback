@@ -11,7 +11,7 @@ module baud_gen (clk, rst, tick);
     input  rst;
     output reg tick;
 
-    parameter CLK_FREQ  = 10_000_000;
+    parameter CLK_FREQ  = 50_000_000;
     parameter BAUD_RATE = 9600;
 
     // Updated divisor for x16 oversampling
@@ -37,7 +37,7 @@ endmodule
 
 // ---------------------------EXPLANATION---------------------------------
 // A 32-bit counter increments on each 'clk'. When it reaches
-// (CLK_FREQ/BAUD_RATE)-1, the module asserts 'tick' for one clock and
+// CLK_FREQ / (BAUD_RATE * 16)-1, the module asserts 'tick' for one clock and
 // resets the counter to zero. 'rst' asynchronously clears the counter and
 // tick. Both the transmitter and receiver consume the same 'tick' to keep
 // their state machines aligned to UART bit boundaries.
