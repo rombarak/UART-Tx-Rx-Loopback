@@ -5,86 +5,93 @@
 // and asserts 'tx_busy' while a frame is in progress.
 //-------------------------------------------
 
-module uart_tx (clk, rst, tick, tx_start, tx_data, tx_line, tx_busy) ;
+module uart_tx (clk, rst, tick, tx_start, tx_data, tx_line, tx_busy);
+    input        clk;
+    input        rst;
+    input        tick;
+    input        tx_start;
+    input  [7:0] tx_data;
+    output reg   tx_line;
+    output reg   tx_busy;
 
-    // Ports
-    input        clk ;        // system clock
-    input        rst ;        // async reset (active high)
-    input        tick ;       // 1-cycle pulse per baud
-    input        tx_start ;   // start request
-    input  [7:0] tx_data ;    // byte to send (LSB first)
-    output reg   tx_line ;    // serial TX line
-    output reg   tx_busy ;    // high while sending
+    parameter DATA_BITS = 8;
 
-    // Params
-    parameter DATA_BITS = 8 ; // fixed to 8 for 8N1
+    localparam [1:0] S_IDLE  = 2'd0,
+                     S_START = 2'd1,
+                     S_DATA  = 2'd2,
+                     S_STOP  = 2'd3;
 
-    // State encoding
-    localparam [1:0] S_IDLE  = 2'd0 ,
-                     S_START = 2'd1 ,
-                     S_DATA  = 2'd2 ,
-                     S_STOP  = 2'd3 ;
+    reg [1:0] state;
+    reg [2:0] bit_idx;
+    reg [7:0] shift_reg;
+    reg [3:0] ticks_done; // Internal counter to track 16 ticks per bit
 
-    // Internals
-    reg [1:0] state ;                 // FSM state
-    reg [2:0] bit_idx ;               // 0..7
-    reg [7:0] shift_reg ;             // data shift register
-
-    // Sequential logic
-    always @(posedge clk or posedge rst)
-    begin
+    always @(posedge clk or posedge rst) begin
         if (rst) begin
-            state     <= S_IDLE ;
-            bit_idx   <= 3'd0 ;
-            shift_reg <= 8'd0 ;
-            tx_line   <= 1'b1 ;       // idle level is '1'
-            tx_busy   <= 1'b0 ;
-        end
-        else begin
-            // default hold
+            state      <= S_IDLE;
+            bit_idx    <= 3'd0;
+            shift_reg  <= 8'd0;
+            tx_line    <= 1'b1;
+            tx_busy    <= 1'b0;
+            ticks_done <= 4'd0;
+        end else begin
             case (state)
                 S_IDLE: begin
-                    tx_line <= 1'b1 ;
-                    tx_busy <= 1'b0 ;
+                    tx_line <= 1'b1;
+                    tx_busy <= 1'b0;
                     if (tx_start) begin
-                        shift_reg <= tx_data ;  // latch data
-                        bit_idx   <= 3'd0 ;
-                        tx_busy   <= 1'b1 ;
-                        state     <= S_START ;
+                        shift_reg  <= tx_data;
+                        bit_idx    <= 3'd0;
+                        tx_busy    <= 1'b1;
+                        ticks_done <= 4'd0;
+                        state      <= S_START;
                     end
                 end
 
                 S_START: begin
                     if (tick) begin
-                        tx_line <= 1'b0 ;      // start bit
-                        state   <= S_DATA ;
+                        tx_line <= 1'b0;
+                        if (ticks_done == 15) begin
+                            ticks_done <= 4'd0;
+                            state      <= S_DATA;
+                        end else begin
+                            ticks_done <= ticks_done + 4'd1;
+                        end
                     end
                 end
 
                 S_DATA: begin
                     if (tick) begin
-                        tx_line   <= shift_reg[0] ;        // LSB first
-                        shift_reg <= {1'b0, shift_reg[7:1]} ; // shift right
-                        if (bit_idx == (DATA_BITS-1))
-                            state <= S_STOP ;
-                        else
-                            bit_idx <= bit_idx + 3'd1 ;
+                        tx_line <= shift_reg[0];
+                        if (ticks_done == 15) begin
+                            ticks_done <= 4'd0;
+                            shift_reg  <= {1'b0, shift_reg[7:1]};
+                            if (bit_idx == (DATA_BITS-1))
+                                state <= S_STOP;
+                            else
+                                bit_idx <= bit_idx + 3'd1;
+                        end else begin
+                            ticks_done <= ticks_done + 4'd1;
+                        end
                     end
                 end
 
                 S_STOP: begin
                     if (tick) begin
-                        tx_line <= 1'b1 ;      // stop bit
-                        state   <= S_IDLE ;
-                        tx_busy <= 1'b0 ;
+                        tx_line <= 1'b1;
+                        if (ticks_done == 15) begin
+                            ticks_done <= 4'd0;
+                            state      <= S_IDLE;
+                            tx_busy    <= 1'b0;
+                        end else begin
+                            ticks_done <= ticks_done + 4'd1;
+                        end
                     end
                 end
-
-                default: state <= S_IDLE ;
+                default: state <= S_IDLE;
             endcase
         end
     end
-
 endmodule
 
 // ---------------------------EXPLANATION---------------------------------
