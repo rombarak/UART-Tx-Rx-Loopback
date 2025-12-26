@@ -224,8 +224,6 @@ The current UART system operates accurately in a full loopback configuration, bu
   Allows dynamic adjustment of the baud rate by replacing the `parameter BAUD_RATE` with a writable control register.  
   When changing the baud rate, make sure to also update timing-related parameters in `baud_gen.v` and the `repeat` delays in `uart_tb.v`.
 
-- **FPGA I/O Integration (External UART Interface)**  
-  Connecting the TX/RX signals to physical FPGA pins enables real serial communication with PCs, microcontrollers, or other devices, facilitating hardware-level verification.
 ---
 <a id="sec-license"></a>
 ## License
